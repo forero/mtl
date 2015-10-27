@@ -12,14 +12,14 @@ def new_observations_file(target_file, output_file):
 
     target_id = targets['TARGETID']
     n_targets = len(target_id)
-    tile_id = np.zeros(n_targets)
-    fiber_id = np.zeros(n_targets)
+    tile_id = -1 * np.ones(n_targets, dtype='int')
+    fiber_id = -1 * np.ones(n_targets, dtype='int')
 
     type_table = [
         ('TARGETID', '>i4'), 
         ('BRICKNAME', '|S8'),
         ('TILEID', '>i4'), 
-        ('FIBERID', '|b1')
+        ('FIBERID', '>i4')
     ]
     data = np.ndarray(shape=(n_targets), dtype=type_table)
     data['TARGETID'] = targets['TARGETID']
@@ -39,7 +39,7 @@ def new_observations_file(target_file, output_file):
 
     return 
 
-def new_results_file(target_file, output_file):
+def new_specresults_file(target_file, output_file):
     """
     Initializes the file summarizing spectral pipeline results.
     """
@@ -70,13 +70,13 @@ def new_results_file(target_file, output_file):
 
     #- Create header to include versions, etc.
     hdr = fitsio.FITSHDR()
-    hdr['DEPNAM00'] = 'mtl-results'
+    hdr['DEPNAM00'] = 'mtl-specresults'
     hdr.add_record(dict(name='DEPVER00', value=mtl.__version__, comment='mtl.__version__'))
     hdr['DEPNAM01'] = 'mtl-git'
     hdr.add_record(dict(name='DEPVAL01', value=mtl.gitversion(), comment='git revision'))
     
 
-    fitsio.write(output_file, data, extname='RESULTS', header=hdr, clobber=True)    
+    fitsio.write(output_file, data, extname='SPECRES', header=hdr, clobber=True)    
 
     return 
 

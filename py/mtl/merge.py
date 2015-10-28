@@ -1,10 +1,13 @@
 import fitsio
 import numpy as np
+from desitarget.internal.maskbits import BitMask
 from mtl.observation import numobs_needed
 from mtl.priority import priority_needed
 import mtl
+import yaml
 
-def create_mtl(target_file, specresults_file, observations_file, output_file):
+
+def create_mtl(target_file, specresults_file, observations_file, output_file, priority_file):
     """
     Consolidates a Merged Target List file.
     """
@@ -37,7 +40,7 @@ def create_mtl(target_file, specresults_file, observations_file, output_file):
     observations_id = observations['TARGETID']
     observation_tile_id = observations['TILEID']
     observation_fiber_id = observations['FIBERID']
-
+    
     spec_z = specresults['Z']
     spec_z_err = specresults['ZERR']
     spec_id = specresults['TARGETID']
@@ -55,6 +58,7 @@ def create_mtl(target_file, specresults_file, observations_file, output_file):
 
     for i in range(n_points):
         item_target_flag = target_flag[i]
+        n_obs_target = targets['NUMOBS'][i]
 
         # counts numbers of observations
         item_id = targetid[i]
@@ -77,14 +81,14 @@ def create_mtl(target_file, specresults_file, observations_file, output_file):
             index = np.where(item_id == results_id)
             index = index[0]
             if (len(index)==1):
- #               print("{} {} OBS".format(i, index))
                 item_z = spec_z[index]
                 item_z_err = spec_z_err[index]
                 item_spec_flag = spec_flag[index]
             else:
+                print("{} {} NO".format(i, index))
                 raise NameError('There are more than two redshift determinations for the same object')
 
-        n = numobs_needed(item_target_flag, n_obs_done, item_z, item_z_err, item_spec_flag)
+        n = numobs_needed(item_target_flag, n_obs_target, n_obs_done, item_z, item_z_err, item_spec_flag)
         p = priority_needed(item_target_flag, item_spec_flag)
 
         if n :

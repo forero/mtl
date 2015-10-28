@@ -22,9 +22,9 @@ def priority_needed(target_flag, results_flag):
         priorities = []
         for name in possible_names:
             mask_id = targetmask.mask(name)            
-            priorities.append(targetmask.mask(name))
+            priorities.append(prioritymask.bitnum(name))
     else:
         raise NameError('Have to implement something in the case results_flag!=0')
         
                 
-    return priorities.index(min(priorities))
+    return min(priorities)

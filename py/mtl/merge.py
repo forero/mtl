@@ -7,7 +7,7 @@ import mtl
 import yaml
 
 
-def create_mtl(target_file, specresults_file, observations_file, output_file, priority_file):
+def create_mtl(target_file, specresults_file, observations_file, output_file):
     """
     Consolidates a Merged Target List file.
     """
@@ -94,7 +94,7 @@ def create_mtl(target_file, specresults_file, observations_file, output_file, pr
         if n :
             ra.append(targets['RA'][i])
             dec.append(targets['DEC'][i])
-            objid.append(item_spec_flag)
+            objid.append(targets['TARGETID'][i])
             priority.append(p)
             numobs.append(n)
             brickname.append(targets['BRICKNAME'][i])

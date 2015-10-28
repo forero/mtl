@@ -15,7 +15,6 @@ ap = ArgumentParser()
 ap.add_argument("src_target", help="Targets file")
 ap.add_argument("src_observations", help="Observations file")
 ap.add_argument("src_specresults", help="Spectrographic results file")
-ap.add_argument("priority_file", help="ascii file defining the priorities")
 ap.add_argument("dest", help="Output MTL")
 ap.add_argument('-v', "--verbose", action='store_true')
 
@@ -35,7 +34,7 @@ def main():
         new_specresults_file(ns.src_target, ns.src_specresults)
 
     # from the targets, observations and results file, creates the mtl
-    create_mtl(ns.src_target, ns.src_specresults, ns.src_observations, ns.priority_file, ns.dest)
+    create_mtl(ns.src_target, ns.src_specresults, ns.src_observations, ns.dest)
     
 if __name__=="__main__":
     main()

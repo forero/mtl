@@ -15,6 +15,11 @@ def new_specresults_file(target_file, output_file):
     redshift_error = 1E4*np.ones(n_targets)
     target_flag = np.zeros(n_targets, dtype='int64')
     numobs_used = np.zeros(n_targets, dtype='int')
+    zwarn_flag = np.zeros(n_targets, dtype='int64')
+    object_type = np.chararray(n_targets, itemsize=20)
+    object_subtype = np.chararray(n_targets, itemsize=20)
+    object_type[:] = "NONE"
+    object_subtype[:] = "NONE"
 
     type_table = [
         ('TARGETID', '>i4'), 
@@ -22,7 +27,10 @@ def new_specresults_file(target_file, output_file):
         ('TARGETFLAG', '>i8'), 
         ('Z', '>f4'), 
         ('ZERR', '>f4'),
-        ('NUMOBSUSED', '>i4')
+        ('ZWARN', '>i8'), 
+        ('NUMOBSUSED', '>i4'),
+        ('TYPE', '|S20'),
+        ('SUBTYPE', '|S20')
     ]
 
     data = np.ndarray(shape=(n_targets), dtype=type_table)
@@ -32,6 +40,9 @@ def new_specresults_file(target_file, output_file):
     data['Z'] = redshift
     data['ZERR'] = redshift_error
     data['NUMOBSUSED'] = numobs_used
+    data['TYPE'] = object_type
+    data['SUBTYPE'] = object_subtype
+    data['ZWARN'] = zwarn_flag
 
     #- Create header to include versions, etc.
     hdr = fitsio.FITSHDR()

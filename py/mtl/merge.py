@@ -50,6 +50,7 @@ def create_mtl(target_file, specresults_file, output_file):
             print("{} {} NO".format(i, index))
             raise NameError('There are more than two redshift determinations for the same object')
         n_obs_done = specresults['NUMOBSUSED'][index]
+        item_spec_flag = specresults['TARGETFLAG'][index]
 
         n = numobs_needed(n_obs_target, n_obs_done)
         p = priority_needed(item_target_flag, item_spec_flag)

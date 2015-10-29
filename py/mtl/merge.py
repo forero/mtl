@@ -27,9 +27,7 @@ def create_mtl(target_file, specresults_file, output_file):
 
     # loops over the targets looking for:
     # - number of observations performed on the target
-    # - a precise redshift
     # - a definite targetflag
-
 
     n_points = len(targets['TARGETID'])
 
@@ -39,7 +37,6 @@ def create_mtl(target_file, specresults_file, output_file):
     priority = [] 
     numobs = []
     brickname = []
-
 
     for i in range(n_points):
         item_id = targets['TARGETID'][i]

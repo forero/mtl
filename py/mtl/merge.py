@@ -7,14 +7,13 @@ import mtl
 import yaml
 
 
-def create_mtl(target_file, specresults_file, observations_file, output_file):
+def create_mtl(target_file, specresults_file, output_file):
     """
     Consolidates a Merged Target List file.
     """
     # input basic data
     targets = fitsio.read(target_file, 1, upper=True)
     specresults = fitsio.read(specresults_file, 1, upper=True)
-    observations = fitsio.read(observations_file, 1, upper=True)
 
     # structure for output data
     type_table = [
@@ -31,22 +30,8 @@ def create_mtl(target_file, specresults_file, observations_file, output_file):
     # - a precise redshift
     # - a definite targetflag
 
-    targetid = targets['TARGETID']
-    n_points = len(targetid)
-    target_ra = targets['RA']
-    target_dec = targets['DEC']
-    target_flag = targets['TARGETFLAG']
 
-    observations_id = observations['TARGETID']
-    observation_tile_id = observations['TILEID']
-    observation_fiber_id = observations['FIBERID']
-    
-    spec_z = specresults['Z']
-    spec_z_err = specresults['ZERR']
-    spec_id = specresults['TARGETID']
-    spec_flag = specresults['TARGETFLAG']
-
-
+    n_points = len(targets['TARGETID'])
 
     ra = []
     dec = []
@@ -57,36 +42,21 @@ def create_mtl(target_file, specresults_file, observations_file, output_file):
 
 
     for i in range(n_points):
-        item_target_flag = target_flag[i]
+        item_id = targets['TARGETID'][i]
+        item_target_flag = targets['TARGETFLAG'][i]
         n_obs_target = targets['NUMOBS'][i]
 
-        # counts numbers of observations
-        item_id = targetid[i]
-        n_obs_done = 0
-        if item_id in observations_id:
-            index = np.where(item_id == observations_id)
-            index = index[0]
-            if(len(index)):
-                tile_id  = observation_tile_id[index]
-                fiber_id = observation_tile_id[index]
-                n_obs_done = sum((tile_id > 0) & (fiber_id > 0))
+        # find properties in specresults
+        index = np.where(item_id == specresults['TARGETID'])        
+        index = index[0]
+        if(len(index)>1):
+            print("{} {} NO".format(i, index))
+            raise NameError('There are more than two redshift determinations for the same object')
+        n_obs_done = specresults['NUMOBSUSED'][index]
+        item_z = specresults['Z'][index]
+        item_z_err = specresults['ZERR'][index]
+        item_spec_flag = specresults['TARGETFLAG'][index]
 
-#                print("{} {} {} {} RES".format(i, index, n_obs_done, n_points))
-        
-        # finds a value for the redshift and a type
-        item_z = -1.0
-        item_z_err = 1E12
-        item_spec_flag = 0
-        if n_obs_done:
-            index = np.where(item_id == results_id)
-            index = index[0]
-            if (len(index)==1):
-                item_z = spec_z[index]
-                item_z_err = spec_z_err[index]
-                item_spec_flag = spec_flag[index]
-            else:
-                print("{} {} NO".format(i, index))
-                raise NameError('There are more than two redshift determinations for the same object')
 
         n = numobs_needed(item_target_flag, n_obs_target, n_obs_done, item_z, item_z_err, item_spec_flag)
         p = priority_needed(item_target_flag, item_spec_flag)

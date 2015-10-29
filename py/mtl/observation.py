@@ -4,6 +4,6 @@ def numobs_needed(target_flag, numobs_target, numobs_done, obs_z, obs_z_err, spe
     """
     numobs = numobs_target - numobs_done
 
-    return numobs
+    return max(0,numobs)
 
 

@@ -3,6 +3,7 @@ import numpy as np
 from desitarget.internal.maskbits import BitMask
 from mtl.observation import numobs_needed
 from mtl.priority import priority_needed
+from astropy.table import Table
 import mtl
 import yaml
 
@@ -81,5 +82,12 @@ def create_mtl(target_file, specresults_file, output_file):
 
     fitsio.write(output_file, data, extname='MTL', header=hdr, clobber=True)    
     print('wrote {} items to MTL file'.format(len(objid)))
+
+    #- TEMPORARY: fiberassign needs ASCII not FITS
+    #- read it back in an write out an ascii table
+    t = Table.read(output_file, format='fits')
+    text_output = output_file.replace('.fits', '.txt')
+    assert text_output != output_file
+    t.write(text_output, format='ascii')
 
     return 

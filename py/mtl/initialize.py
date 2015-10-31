@@ -1,6 +1,7 @@
 import numpy as np
 import fitsio
 import mtl
+
 def new_specresults_file(target_file, output_file):
     """
     Initializes the file summarizing spectral pipeline results.
@@ -18,9 +19,7 @@ def new_specresults_file(target_file, output_file):
     zwarn_flag = np.zeros(n_targets, dtype='int64')
     object_type = np.chararray(n_targets, itemsize=20)
     object_subtype = np.chararray(n_targets, itemsize=20)
-    object_type[:] = "NONE"
-    object_subtype[:] = "NONE"
-
+    
     type_table = [
         ('TARGETID', '>i4'), 
         ('BRICKNAME', '|S8'),
@@ -28,18 +27,23 @@ def new_specresults_file(target_file, output_file):
         ('Z', '>f4'), 
         ('ZERR', '>f4'),
         ('ZWARN', '>i8'), 
-        ('NUMOBSUSED', '>i4'),
+        ('NUMOBS', '>i4'),
         ('TYPE', '|S20'),
         ('SUBTYPE', '|S20')
     ]
 
     data = np.ndarray(shape=(n_targets), dtype=type_table)
+
+    for i in range(n_targets):
+        object_type[i] = mtl.priority.return_type(targets['TARGETFLAG'][i])
+        object_subtype[i] = mtl.priority.return_type(targets['TARGETFLAG'][i])
+
     data['TARGETID'] = targets['TARGETID']
     data['BRICKNAME'] = targets['BRICKNAME']
     data['TARGETFLAG'] = target_flag
     data['Z'] = redshift
     data['ZERR'] = redshift_error
-    data['NUMOBSUSED'] = numobs_used
+    data['NUMOBS'] = numobs_used
     data['TYPE'] = object_type
     data['SUBTYPE'] = object_subtype
     data['ZWARN'] = zwarn_flag

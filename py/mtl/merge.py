@@ -31,46 +31,31 @@ def create_mtl(target_file, specresults_file, output_file):
     # - a definite targetflag
 
     n_points = len(targets['TARGETID'])
+    num_obs = np.zeros(n_points, dtype='int')
+    priority = np.zeros(n_points, dtype='int')
 
-    ra = []
-    dec = []
-    objid = []
-    priority = [] 
-    numobs = []
-    brickname = []
+    iiobs = np.in1d(targets['TARGETID'], specresults['TARGETID'])
 
+    id_results = 0
     for i in range(n_points):
-        item_id = targets['TARGETID'][i]
-        item_target_flag = targets['TARGETFLAG'][i]
-        n_obs_target = targets['NUMOBS'][i]
+        if iiobs[i]:
+            n_obs_done = specresults['TARGETID'][id_results]
+            results_subtype = specresults['SUBTYPE'][id_results]
+            id_results = id_results + 1
+        else:
+            n_obs_done = 0
+            results_subtype = None
 
-        # find properties in specresults
-        index = np.where(item_id == specresults['TARGETID'])        
-        index = index[0]
-        if(len(index)>1):
-            print("{} {} NO".format(i, index))
-            raise NameError('There are more than two redshift determinations for the same object')
-        n_obs_done = specresults['NUMOBSUSED'][index]
-        item_spec_flag = specresults['TARGETFLAG'][index]
-
-        n = numobs_needed(n_obs_target, n_obs_done)
-        p = priority_needed(item_target_flag, item_spec_flag)
-        
-        if n :
-            ra.append(targets['RA'][i])
-            dec.append(targets['DEC'][i])
-            objid.append(targets['TARGETID'][i])
-            priority.append(p)
-            numobs.append(n)
-            brickname.append(targets['BRICKNAME'][i])
+        num_obs[i] = numobs_needed(targets['NUMOBS'][i], n_obs_done)
+        priority[i] = priority_needed(targets['TARGETFLAG'][i], results_subtype=results_subtype)
 
 
-    data = np.ndarray(shape=(len(objid)), dtype=type_table)    
-    data['TARGETID'] = objid
-    data['RA'] = ra
-    data['DEC'] = dec
-    data['BRICKNAME'] = brickname
-    data['NUMOBS'] = numobs
+    data = np.ndarray(shape=(n_points), dtype=type_table)    
+    data['TARGETID'] = targets['TARGETID']
+    data['RA'] = targets['RA']
+    data['DEC'] = targets['DEC']
+    data['BRICKNAME'] = targets['BRICKNAME']
+    data['NUMOBS'] = num_obs
     data['PRIORITY'] = priority
 
     #- Create header to include versions, etc.
@@ -81,7 +66,7 @@ def create_mtl(target_file, specresults_file, output_file):
     hdr.add_record(dict(name='DEPVAL01', value=mtl.gitversion(), comment='git revision'))    
 
     fitsio.write(output_file, data, extname='MTL', header=hdr, clobber=True)    
-    print('wrote {} items to MTL file'.format(len(objid)))
+    print('wrote {} items to MTL file'.format(n_points))
 
     #- TEMPORARY: fiberassign needs ASCII not FITS
     #- read it back in an write out an ascii table

@@ -33,7 +33,7 @@ def create_mtl(target_file, specresults_file, output_file):
     n_points = len(targets['TARGETID'])
     num_obs = np.zeros(n_points, dtype='int')
     priority = np.zeros(n_points, dtype='int')
-
+    
     iiobs = np.in1d(targets['TARGETID'], specresults['TARGETID'])
 
     id_results = 0

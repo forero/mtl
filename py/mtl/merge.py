@@ -25,7 +25,7 @@ def create_mtl(target_file, specresults_file, output_file):
         ('NUMOBS', '>i4'), 
         ('PRIORITY', '>i4')
     ]
-
+    print targets['NUMOBS']
     # loops over the targets looking for:
     # - number of observations performed on the target
     # - a definite targetflag
@@ -39,7 +39,7 @@ def create_mtl(target_file, specresults_file, output_file):
     id_results = 0
     for i in range(n_points):
         if iiobs[i]:
-            n_obs_done = specresults['TARGETID'][id_results]
+            n_obs_done = specresults['NUMOBS'][id_results]
             results_subtype = specresults['SUBTYPE'][id_results]
             id_results = id_results + 1
         else:

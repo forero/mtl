@@ -25,7 +25,7 @@ def create_mtl(target_file, specresults_file, output_file):
         ('NUMOBS', '>i4'), 
         ('PRIORITY', '>i4')
     ]
-    print targets['NUMOBS']
+
     # loops over the targets looking for:
     # - number of observations performed on the target
     # - a definite targetflag

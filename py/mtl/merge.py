@@ -18,7 +18,7 @@ def create_mtl(target_file, specresults_file, output_file):
 
     # structure for output data
     type_table = [
-        ('TARGETID', '>i4'), 
+        ('TARGETID', '>i8'), 
         ('BRICKNAME', '|S8'),
         ('RA', '>f4'), 
         ('DEC', '>f4'),

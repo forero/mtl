@@ -73,6 +73,6 @@ def create_mtl(target_file, specresults_file, output_file):
     t = Table.read(output_file, format='fits')
     text_output = output_file.replace('.fits', '.txt')
     assert text_output != output_file
-    t.write(text_output, format='ascii')
+    t.write(text_output, format='ascii.commented_header')
 
     return 

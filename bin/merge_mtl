@@ -2,7 +2,7 @@
 
 from __future__ import print_function, division
 
-from mtl.initialize import new_specresults_file
+
 from argparse import ArgumentParser
 import os.path
 from astropy.table import Table, vstack

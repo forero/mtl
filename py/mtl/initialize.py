@@ -28,15 +28,11 @@ def new_specresults_file(target_file, output_file):
         ('ZERR', '>f4'),
         ('ZWARN', '>i8'), 
         ('NUMOBS', '>i4'),
-        ('TYPE', '|S20'),
-        ('SUBTYPE', '|S20')
+        ('TYPE', '|S20')
     ]
 
     data = np.ndarray(shape=(n_targets), dtype=type_table)
 
-    for i in range(n_targets):
-        object_type[i] = mtl.priority.return_type(targets['TARGETFLAG'][i])
-        object_subtype[i] = mtl.priority.return_type(targets['TARGETFLAG'][i])
 
     data['TARGETID'] = targets['TARGETID']
     data['BRICKNAME'] = targets['BRICKNAME']
@@ -44,8 +40,7 @@ def new_specresults_file(target_file, output_file):
     data['Z'] = redshift
     data['ZERR'] = redshift_error
     data['NUMOBS'] = numobs_used
-    data['TYPE'] = object_type
-    data['SUBTYPE'] = object_subtype
+    data['TYPE'] = targets['DESI_TARGET']
     data['ZWARN'] = zwarn_flag
 
     #- Create header to include versions, etc.

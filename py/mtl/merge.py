@@ -1,8 +1,8 @@
 import fitsio
 import numpy as np
-from desitarget.internal.maskbits import BitMask
+from desitarget.targets import calc_numobs
+from desitarget.targets import calc_priority
 from mtl.observation import numobs_needed
-from mtl.priority import priority_needed
 from astropy.table import Table
 import mtl
 import yaml
@@ -33,8 +33,11 @@ def create_mtl(target_file, specresults_file, output_file):
     n_points = len(targets['TARGETID'])
     num_obs = np.zeros(n_points, dtype='int')
     priority = np.zeros(n_points, dtype='int')
-    
+    required_numobs = calc_numobs(targets)
     iiobs = np.in1d(targets['TARGETID'], specresults['TARGETID'])
+
+    #update the priority
+    priority = calc_priority(targets)
 
     id_results = 0
     for i in range(n_points):
@@ -45,9 +48,8 @@ def create_mtl(target_file, specresults_file, output_file):
         else:
             n_obs_done = 0
             results_subtype = None
+        num_obs[i] = numobs_needed(required_numobs[i], n_obs_done)
 
-        num_obs[i] = numobs_needed(targets['NUMOBS'][i], n_obs_done)
-        priority[i] = priority_needed(targets['TARGETFLAG'][i], results_subtype=results_subtype)
 
 
     data = np.ndarray(shape=(n_points), dtype=type_table)    

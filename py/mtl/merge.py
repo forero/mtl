@@ -31,6 +31,7 @@ def create_mtl(target_file, specresults_file, output_file):
         ('DEC', '>f4'),
         ('NUMOBS', '>i4'), 
         ('PRIORITY', '>i4'),
+        ('LASTPASS', '>i4'),
         ('DESI_TARGET', '>i8'), 
         ('BGS_TARGET', '>i8'), 
         ('MWS_TARGET', '>i8')
@@ -50,7 +51,7 @@ def create_mtl(target_file, specresults_file, output_file):
 #    IPython.embed()
 
     # update the priority, 
-    # TEMPORARY: We don't take into account the targetstate. This has to be changed).
+    # TEMPORARY: We don't take into account the targetstate. This should be changed).
     priority = calc_priority(targets)
     
     id_results = 0
@@ -70,6 +71,7 @@ def create_mtl(target_file, specresults_file, output_file):
     data['DESI_TARGET'] = targets['DESI_TARGET']
     data['BGS_TARGET'] = targets['BGS_TARGET']
     data['MWS_TARGET'] = targets['MWS_TARGET']
+    data['LASTPASS'] = targets['LASTPASS']
     data['NUMOBS'] = num_obs
     data['PRIORITY'] = priority
 
